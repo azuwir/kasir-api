@@ -38,7 +38,11 @@ var products = []Product{
 // API Endpoint: GET Categories
 func getCategories(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(categories)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status":  "success",
+		"message": "Categories retrieved successfully",
+		"data":    categories,
+	})
 }
 
 // API endpoint: POST Create Category
@@ -54,7 +58,11 @@ func createCategory(w http.ResponseWriter, r *http.Request) {
 	categories = append(categories, newCategory)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(newCategory)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status":  "success",
+		"message": "Category created successfully",
+		"data":    newCategory,
+	})
 }
 
 // API Endpoint: GET Category by ID
@@ -72,11 +80,19 @@ func getCategoryByID(w http.ResponseWriter, r *http.Request) {
 	for _, category := range categories {
 		if category.ID == id {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(category)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status":  "success",
+				"message": "Category retrieved successfully",
+				"data":    category,
+			})
 			return
 		}
 	}
-	http.Error(w, "Category not found", http.StatusNotFound)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "error",
+		"message": "Category not found",
+	})
 }
 
 // API Endpoint: PUT Update Category
@@ -104,11 +120,19 @@ func updateCategory(w http.ResponseWriter, r *http.Request) {
 			categories[i] = updatedCategory
 
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(updatedCategory)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status":  "success",
+				"message": "Category updated successfully",
+				"data":    updatedCategory,
+			})
 			return
 		}
 	}
-	http.Error(w, "Category not found", http.StatusNotFound)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "error",
+		"message": "Category not found",
+	})
 }
 
 // API Endpoint: DELETE Category
@@ -136,13 +160,21 @@ func deleteCategory(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	http.Error(w, "Category not found", http.StatusNotFound)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "error",
+		"message": "Category not found",
+	})
 }
 
 // API Endpoint: GET Products
 func getProducts(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(products)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status":  "success",
+		"message": "Products retrieved successfully",
+		"data":    products,
+	})
 }
 
 // API Endpoint: POST Create Product
@@ -158,7 +190,11 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 	products = append(products, newProduct)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(newProduct)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status":  "success",
+		"message": "Product created successfully",
+		"data":    newProduct,
+	})
 }
 
 // API Endpoint: GET Product by ID
@@ -176,11 +212,19 @@ func getProductByID(w http.ResponseWriter, r *http.Request) {
 	for _, product := range products {
 		if product.ID == id {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(product)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status":  "success",
+				"message": "Product retrieved successfully",
+				"data":    product,
+			})
 			return
 		}
 	}
-	http.Error(w, "Product not found", http.StatusNotFound)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "error",
+		"message": "Product not found",
+	})
 }
 
 // API Endpoint: PUT UPDATE Product
@@ -208,11 +252,19 @@ func updateProduct(w http.ResponseWriter, r *http.Request) {
 			products[i] = updatedProduct
 
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(updatedProduct)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status":  "success",
+				"message": "Product updated successfully",
+				"data":    updatedProduct,
+			})
 			return
 		}
 	}
-	http.Error(w, "Product not found", http.StatusNotFound)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "error",
+		"message": "Product not found",
+	})
 }
 
 // API Endpoint: DELETE Product
@@ -240,7 +292,11 @@ func deleteProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	http.Error(w, "Product not found", http.StatusNotFound)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "error",
+		"message": "Product not found",
+	})
 }
 
 func main() {
@@ -300,6 +356,15 @@ func main() {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
+	})
+
+	// API Endpoint: Root
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "success",
+			"message": "Welcome to the Kasir API using Golang!",
+		})
 	})
 
 	// API Endpoint: Server Health Check
