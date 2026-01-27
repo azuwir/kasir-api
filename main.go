@@ -35,6 +35,12 @@ var products = []Product{
 	{ID: 3, Name: "Tablet", Price: 299.99, Stock: 15},
 }
 
+// API Endpoint: GET Categories
+func getCategories(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(categories)
+}
+
 // API endpoint: POST Create Category
 func createCategory(w http.ResponseWriter, r *http.Request) {
 	var newCategory Category
@@ -131,6 +137,12 @@ func deleteCategory(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	http.Error(w, "Category not found", http.StatusNotFound)
+}
+
+// API Endpoint: GET Products
+func getProducts(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(products)
 }
 
 // API Endpoint: POST Create Product
@@ -234,12 +246,12 @@ func deleteProduct(w http.ResponseWriter, r *http.Request) {
 func main() {
 	// API Endpoint: Get Categories, Create Category
 	http.HandleFunc("/api/categories", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(categories)
-		} else if r.Method == http.MethodPost {
+		switch r.Method {
+		case http.MethodGet:
+			getCategories(w)
+		case http.MethodPost:
 			createCategory(w, r)
-		} else {
+		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
@@ -248,16 +260,14 @@ func main() {
 	// API Endpoint: Get Category by ID, Update Category, Delete Category
 	http.HandleFunc("/api/categories/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		if r.Method == http.MethodGet {
+		switch r.Method {
+		case http.MethodGet:
 			getCategoryByID(w, r)
-			return
-		} else if r.Method == http.MethodPut {
+		case http.MethodPut:
 			updateCategory(w, r)
-			return
-		} else if r.Method == http.MethodDelete {
+		case http.MethodDelete:
 			deleteCategory(w, r)
-			return
-		} else {
+		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
@@ -265,12 +275,12 @@ func main() {
 
 	// API Endpoint: Get Products, Create Product
 	http.HandleFunc("/api/products", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(products)
-		} else if r.Method == http.MethodPost {
+		switch r.Method {
+		case http.MethodGet:
+			getProducts(w)
+		case http.MethodPost:
 			createProduct(w, r)
-		} else {
+		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
@@ -279,16 +289,14 @@ func main() {
 	// API Endpoint: Get Product by ID, Update Product, Delete Product
 	http.HandleFunc("/api/products/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		if r.Method == http.MethodGet {
+		switch r.Method {
+		case http.MethodGet:
 			getProductByID(w, r)
-			return
-		} else if r.Method == http.MethodPut {
+		case http.MethodPut:
 			updateProduct(w, r)
-			return
-		} else if r.Method == http.MethodDelete {
+		case http.MethodDelete:
 			deleteProduct(w, r)
-			return
-		} else {
+		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
