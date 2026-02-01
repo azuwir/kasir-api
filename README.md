@@ -1,1 +1,2 @@
-# kasir-api
+# goapi
+API Boilerplate using Golang
