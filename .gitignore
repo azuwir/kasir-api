@@ -7,7 +7,7 @@
 *.dll
 *.so
 *.dylib
-goapi
+kasir-api
 
 # Test binary, built with `go test -c`
 *.test
