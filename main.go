@@ -70,6 +70,15 @@ func main() {
 	// Setup transaction routes
 	http.HandleFunc("/api/checkout", TransactionHandler.HandleCheckout)
 
+	// Dependency Injection for Report
+	ReportRepository := repositories.NewReportRepository(db)
+	ReportService := services.NewReportService(ReportRepository)
+	ReportHandler := handlers.NewReportHandler(ReportService)
+
+	// Setup report routes
+	http.HandleFunc("/api/report", ReportHandler.HandleReport)
+	http.HandleFunc("/api/report/today", ReportHandler.HandleReportToday)
+
 	// API Endpoint: Root
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
