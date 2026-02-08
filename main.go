@@ -44,6 +44,7 @@ func main() {
 	}
 	defer db.Close()
 
+	// Dependency Injection for Category
 	CategoryRepository := repositories.NewCategoryRepository(db)
 	CategoryService := services.NewCategoryService(CategoryRepository)
 	CategoryHandler := handlers.NewCategoryHandler(CategoryService)
@@ -52,13 +53,22 @@ func main() {
 	http.HandleFunc("/api/categories", CategoryHandler.HandleCategories)
 	http.HandleFunc("/api/categories/", CategoryHandler.HandleCategoryByID)
 
+	// Dependency Injection for Product
 	ProductRepository := repositories.NewProductRepository(db)
 	ProductService := services.NewProductService(ProductRepository)
 	ProductHandler := handlers.NewProductHandler(ProductService)
 
-	// Setup routes
+	// Setup product routes
 	http.HandleFunc("/api/products", ProductHandler.HandleProducts)
 	http.HandleFunc("/api/products/", ProductHandler.HandleProductByID)
+
+	// Dependency Injection for Transaction
+	TransactionRepository := repositories.NewTransactionRepository(db)
+	TransactionService := services.NewTransactionService(TransactionRepository)
+	TransactionHandler := handlers.NewTransactionHandler(TransactionService)
+
+	// Setup transaction routes
+	http.HandleFunc("/api/checkout", TransactionHandler.HandleCheckout)
 
 	// API Endpoint: Root
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
