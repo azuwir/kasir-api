@@ -18,19 +18,20 @@ func NewProductHandler(service *services.ProductService) *ProductHandler {
 }
 
 // HandleProducts - GET /api/produk
-func (h *ProductHandler) HandleProducts(w http.ResponseWriter, r *http.Request) {
+func (handler *ProductHandler) HandleProducts(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		h.GetProducts(w, r)
+		handler.GetProducts(w, r)
 	case http.MethodPost:
-		h.CreateProduct(w, r)
+		handler.CreateProduct(w, r)
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
-	products, err := h.service.GetProducts()
+func (handler *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	products, err := handler.service.GetProducts(name)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -44,7 +45,7 @@ func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
+func (handler *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	var product models.Product
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
@@ -52,7 +53,7 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.service.CreateProduct(&product)
+	err = handler.service.CreateProduct(&product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -64,21 +65,21 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleProductByID - GET/PUT/DELETE /api/produk/{id}
-func (h *ProductHandler) HandleProductByID(w http.ResponseWriter, r *http.Request) {
+func (handler *ProductHandler) HandleProductByID(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		h.GetProductByID(w, r)
+		handler.GetProductByID(w, r)
 	case http.MethodPut:
-		h.UpdateProduct(w, r)
+		handler.UpdateProduct(w, r)
 	case http.MethodDelete:
-		h.DeleteProduct(w, r)
+		handler.DeleteProduct(w, r)
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
 // GetProductByID - GET /api/products/{id}
-func (h *ProductHandler) GetProductByID(w http.ResponseWriter, r *http.Request) {
+func (handler *ProductHandler) GetProductByID(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/products/")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -86,7 +87,7 @@ func (h *ProductHandler) GetProductByID(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	product, err := h.service.GetProductByID(id)
+	product, err := handler.service.GetProductByID(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -100,7 +101,7 @@ func (h *ProductHandler) GetProductByID(w http.ResponseWriter, r *http.Request) 
 	})
 }
 
-func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
+func (handler *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/products/")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -116,7 +117,7 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	product.ID = id
-	err = h.service.UpdateProduct(&product)
+	err = handler.service.UpdateProduct(&product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -131,7 +132,7 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 // DeleteProduct - DELETE /api/products/{id}
-func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
+func (handler *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/products/")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -139,7 +140,7 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.service.DeleteProduct(id)
+	err = handler.service.DeleteProduct(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
